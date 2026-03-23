@@ -1,16 +1,16 @@
-# Retail Sales Analysis SQL Project
+# E-Commerce Analysis SQL Project
 
 ## Project Overview
 
-**Project Title**: Retail Sales Analysis  
-**Level**: Beginner  
-**Database**: `p1_retail_db`
+**Project Title**: E-Commerce Analysis  
+**Level**: Advanced  
+**Database**: `E-Commerce`
 
 This project is designed to demonstrate SQL skills and techniques typically used by data analysts to explore, clean, and analyze retail sales data. The project involves setting up a retail sales database, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries. This project is ideal for those who are starting their journey in data analysis and want to build a solid foundation in SQL.
 
 ## Objectives
 
-1. **Set up a retail sales database**: Create and populate a retail sales database with the provided sales data.
+1. **Set up a E_Commerce database**: Create and populate a E-Commerce database with the provided data.
 2. **Data Cleaning**: Identify and remove any records with missing or null values.
 3. **Exploratory Data Analysis (EDA)**: Perform basic exploratory data analysis to understand the dataset.
 4. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the sales data.
@@ -19,26 +19,49 @@ This project is designed to demonstrate SQL skills and techniques typically used
 
 ### 1. Database Setup
 
-- **Database Creation**: The project starts by creating a database named `p1_retail_db`.
-- **Table Creation**: A table named `retail_sales` is created to store the sales data. The table structure includes columns for transaction ID, sale date, sale time, customer ID, gender, age, product category, quantity sold, price per unit, cost of goods sold (COGS), and total sale amount.
+- **Database Creation**: The project starts by creating a database named `E-Commerce`.
+- **Orders Tables Creation**: Table named `Orders` is created to store the Orders data. The table structure includes columns for Order_ID, Order_Date, Customer-ID, Total_Amount.
+- **Order Details Table Creation**: Table named `OrderDetails` is created to store the order details data. The Table structure includes columns for Order_ID, Product_Id, Quantity, Price_Per_Unit.
+- **Customers Table Creation**: Table named `Customers` is created to store the customers details data. The table struture includes columns for Customer_ID, Customer_Name, Location.
+- **Products Table Creation**: Table named `Products` is created to store the Products Details data. The table Struture includes columns for Product_ID, Product_name, Category, Price.
 
 ```sql
-CREATE DATABASE p1_retail_db;
+CREATE DATABASE E-Commerce;
 
-CREATE TABLE retail_sales
-(
-    transactions_id INT PRIMARY KEY,
-    sale_date DATE,	
-    sale_time TIME,
-    customer_id INT,	
-    gender VARCHAR(10),
-    age INT,
-    category VARCHAR(35),
-    quantity INT,
-    price_per_unit FLOAT,	
-    cogs FLOAT,
-    total_sale FLOAT
-);
+drop table if exists Products;
+Create Table Products 
+		(
+        Product_ID int Primary Key,
+		Product_Name varchar(100),
+        Category Varchar (50),
+        Price int
+        );
+
+Drop Table if exists Orderdetails;
+Create Table OrderDetails
+			(
+            Order_ID int,
+            Product_ID int,
+            Quantity int,
+            Price_per_Unit int
+            );
+
+drop table if exists Customers;		
+Create table Customers
+			(
+            Customer_Id int Primary key,
+            Customer_name varchar (50),
+            Location varchar (50)
+            );
+            
+drop table if exists Orders;
+Create table Orders
+			(
+            Order_ID int Primary key,
+            Order_date date,
+            Customer_id int,
+            Total_amount int
+            );
 ```
 
 ### 2. Data Exploration & Cleaning
@@ -49,179 +72,356 @@ CREATE TABLE retail_sales
 - **Null Value Check**: Check for any null values in the dataset and delete records with missing data.
 
 ```sql
-SELECT COUNT(*) FROM retail_sales;
-SELECT COUNT(DISTINCT customer_id) FROM retail_sales;
-SELECT DISTINCT category FROM retail_sales;
+Select Count(*) from Orders;
+Select Count(*) from Products;
+Select Count(*) from Orderdetails;
+Select Count(*) from Customers;
 
-SELECT * FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
+Select * from Orders
+where 
+	Order_id is null
+    or 
+    Order_date is null
+    or 
+    Customer_ID is null;
 
-DELETE FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
+delete from Orders
+where 
+	Order_id is null
+    or 
+    Order_date is null
+    or 
+    Customer_ID is null;
+
+
+Select * from Customers
+where 
+	Customer_ID is null
+    or
+    Customer_Name is null
+    or 
+    Location is null;
+
+
+delete from Customers
+where 
+	Order_ID is null
+    or
+    Product_ID is null
+    or 
+    Quantity is null;
+    
+Select * from OrderDetails
+where 
+	Order_ID is null
+    or
+    Product_ID is null
+    or 
+    Quantity is null
+    or 
+    Price_per_unit is null;
+
+
+delete from OrderDetails
+where 
+	Order_ID is null
+    or
+    Product_ID is null
+    or 
+    Quantity is null
+    or 
+    Price_per_unit is null;
+	
+Select * from Products
+where 
+	Product_ID is null
+    or
+    Product_Name is null
+    or 
+    Category is null
+    or 
+    Price is null;
+
+
+delete from Products
+where 
+	Product_ID is null
+    or
+    Product_Name is null
+    or 
+    Category is null
+    or 
+    Price is null;
 ```
 
 ### 3. Data Analysis & Findings
 
 The following SQL queries were developed to answer specific business questions:
 
-1. **Write a SQL query to retrieve all columns for sales made on '2022-11-05**:
+1. **How many customers are there in each location**:
 ```sql
-SELECT *
-FROM retail_sales
-WHERE sale_date = '2022-11-05';
+Select Location, Count(Customer_name) as Customers_Count
+from Customers
+group by Location
+order by Customers_Count desc;
 ```
 
-2. **Write a SQL query to retrieve all transactions where the category is 'Clothing' and the quantity sold is more than 4 in the month of Nov-2022**:
+2. **Which city has the highest number of customers**:
 ```sql
-SELECT 
-  *
-FROM retail_sales
-WHERE 
-    category = 'Clothing'
-    AND 
-    TO_CHAR(sale_date, 'YYYY-MM') = '2022-11'
-    AND
-    quantity >= 4
+Select Location, Count(Customer_ID) as Customer_Count 
+From Customers
+group by location
+order by count(*) desc
+limit 1;
 ```
 
-3. **Write a SQL query to calculate the total sales (total_sale) for each category.**:
+3. **Which customer has spent the most money**:
 ```sql
-SELECT 
-    category,
-    SUM(total_sale) as net_sale,
-    COUNT(*) as total_orders
-FROM retail_sales
-GROUP BY 1
+Select O.Customer_ID,C.Customer_Name,  Sum(O.Total_Amount) as Total_Spent
+from orders O
+Join Customers c
+on O.Customer_ID=C.Customer_ID
+group by O.Customer_ID, C.Customer_name
+order by Total_spent desc
+limit 1;
 ```
 
-4. **Write a SQL query to find the average age of customers who purchased items from the 'Beauty' category.**:
+4. **Top 10 customers by total purchase amount**:
 ```sql
-SELECT
-    ROUND(AVG(age), 2) as avg_age
-FROM retail_sales
-WHERE category = 'Beauty'
+Select O.Customer_ID, C.Customer_Name, Sum(Total_Amount) as Total_Purchase
+from Orders O
+join Customers C
+On O.Customer_Id=C.Customer_ID
+group by o.Customer_ID, C.Customer_Name
+order by Total_Purchase desc
+limit 10; 
 ```
 
-5. **Write a SQL query to find all transactions where the total_sale is greater than 1000.**:
+5. **Which location generates the highest revenue**:
 ```sql
-SELECT * FROM retail_sales
-WHERE total_sale > 1000
+Select C.Location, Sum(Total_Amount) as Total_revenue 
+from Orders O
+Join Customers C
+on O.Customer_ID= C.Customer_Id
+group by C.Location
+order by Total_Revenue desc
+limit 1;
 ```
 
-6. **Write a SQL query to find the total number of transactions (transaction_id) made by each gender in each category.**:
+6. **How many orders does each customer place**:
 ```sql
-SELECT 
-    category,
-    gender,
-    COUNT(*) as total_trans
-FROM retail_sales
-GROUP 
-    BY 
-    category,
-    gender
-ORDER BY 1
+Select O.Customer_ID, C.Customer_Name, Count(Order_ID) as Count_OF_Orders 
+from Orders O
+Join Customers C
+on O.Customer_Id=C.Customer_ID
+group by O.Customer_ID, C.Customer_Name
+order by Count_OF_Orders Desc;
 ```
 
-7. **Write a SQL query to calculate the average sale for each month. Find out best selling month in each year**:
+7. **Customer with the highest number of orders**:
 ```sql
-SELECT 
-       year,
-       month,
-    avg_sale
-FROM 
-(    
-SELECT 
-    EXTRACT(YEAR FROM sale_date) as year,
-    EXTRACT(MONTH FROM sale_date) as month,
-    AVG(total_sale) as avg_sale,
-    RANK() OVER(PARTITION BY EXTRACT(YEAR FROM sale_date) ORDER BY AVG(total_sale) DESC) as rank
-FROM retail_sales
-GROUP BY 1, 2
-) as t1
-WHERE rank = 1
+Select O.Customer_ID, C.Customer_Name, Count(Order_ID) as Count_OF_Orders 
+from Orders O
+Join Customers C
+on O.Customer_Id=C.Customer_ID
+group by O.Customer_ID, C.Customer_Name
+order by Count_OF_Orders Desc
+Limit 1;
 ```
 
-8. **Write a SQL query to find the top 5 customers based on the highest total sales **:
+8. **Which product sells the most (by quantity)**:
 ```sql
-SELECT 
-    customer_id,
-    SUM(total_sale) as total_sales
-FROM retail_sales
-GROUP BY 1
-ORDER BY 2 DESC
-LIMIT 5
+Select OI.Product_ID, P.Product_Name, Sum(OI.Quantity) as Quantity 
+from OrderDetails OI
+Join Products P
+on OI.Product_ID= P.Product_ID
+group by OI.Product_ID, P.Product_Name
+order by Quantity desc
+limit 1;
 ```
 
-9. **Write a SQL query to find the number of unique customers who purchased items from each category.**:
+9. **Top 5 best-selling products**:
 ```sql
-SELECT 
-    category,    
-    COUNT(DISTINCT customer_id) as cnt_unique_cs
-FROM retail_sales
-GROUP BY category
+Select OI.Product_ID, P.Product_Name, Sum(OI.Quantity) as Quantity 
+from OrderDetails OI
+Join Products P
+on OI.Product_ID= P.Product_ID
+group by OI.Product_ID, P.Product_Name
+order by Quantity desc
+limit 5; 
 ```
 
-10. **Write a SQL query to create each shift and number of orders (Example Morning <12, Afternoon Between 12 & 17, Evening >17)**:
+10. **Which category sells the most**:
 ```sql
-WITH hourly_sale
-AS
-(
-SELECT *,
-    CASE
-        WHEN EXTRACT(HOUR FROM sale_time) < 12 THEN 'Morning'
-        WHEN EXTRACT(HOUR FROM sale_time) BETWEEN 12 AND 17 THEN 'Afternoon'
-        ELSE 'Evening'
-    END as shift
-FROM retail_sales
+Select P.Category, Sum(OI.Quantity) as Quantity
+from OrderDetails OI
+Join Products P
+on OI.Product_ID= P.Product_ID
+group by P.Category
+order by Quantity desc
+limit 1; 
+```
+
+11. **Which product generates the highest revenue**:
+```sql
+Select P.Product_ID, P.Product_Name, Sum(OI.Quantity*OI.Price_Per_Unit) as Revenue 
+from OrderDetails OI
+Join Products P
+on OI.Product_ID= P.Product_ID
+group by P.Product_ID, P.Product_Name
+order by Revenue desc
+limit 1; 
+```
+
+12. **Least selling product (Low Selling Product)**:
+```sql
+Select P.Product_ID, P.Product_Name as Least_Selling_Product_Name, Sum(OI.Quantity) as Qunatity
+from OrderDetails OI
+Join Products P
+on OI.Product_ID= P.Product_ID
+group by P.Product_ID, P.Product_Name
+order by Qunatity asc
+limit 1; 
+```
+13. **Average price of products per category**:
+```sql
+Select Product_ID, Product_Name, Category, Round(avg(Price) over (partition by Category),2) as Avg_Price 
+from Products 
+order by Category;
+
+```
+14. **Which category has the highest demand**:
+```sql
+Select P.Product_ID, P.Product_Name as High_Selling_Product_Name, Sum(OI.Quantity) as Qunatity
+from OrderDetails OI
+Join Products P
+on OI.Product_ID= P.Product_ID
+group by P.Product_ID, P.Product_Name
+order by Qunatity desc
+limit 1;
+```
+15. **Identify products that never sold**:
+```sql
+Select Product_ID, Product_Name 
+from Products 
+Where Product_ID not in (Select Distinct Product_ID from OrderDetails);
+```
+16. **Calculate total company revenue**:
+```sql
+Select Sum(Total_Amount) as Total_Revenue 
+from Orders;
+```
+17. **Calculate monthly sales trend and the growth rate month over month**:
+```sql
+With ctc as (Select date_format(Order_date, '%Y-%m') as Month, Sum(Total_Amount) as Sale
+from Orders
+group by date_format(Order_Date, '%Y-%m')
 )
-SELECT 
-    shift,
-    COUNT(*) as total_orders    
-FROM hourly_sale
-GROUP BY shift
+Select *, Lag(Sale) over (order by Month) as Previous_Month_Sales,
+Round(
+        (
+        (Sale - Lag(Sale) over (Order by Month)) /     Lag(Sale) over (Order by Month)
+        ) * 100 , 2) as Growth_Rate
+from ctc order by month;
 ```
+18. **Best selling product in each category**:
+```sql
+with ctc as (Select P.Product_ID, P.Product_Name, P.Category,Sum(OI.Quantity) as Sold_Quantity,  dense_rank() over (Partition by P.Category order by sum(OI.Quantity)  desc) as Rnk 
+from Products P
+join Orderdetails OI
+on P.Product_ID=OI.Product_ID
+join Orders O
+on OI.Order_ID=O.Order_ID
+group by P.Product_ID, P.Product_Name, P.Category)
+Select Category, Product_ID, Product_name, Sold_Quantity from ctc 
+where rnk=1;
+```
+19. **Revenue per customer location**:
+```sql
+Select C.Location, Sum(O.Total_amount) as Revenue 
+from Customers C
+join Orders O
+on C.Customer_ID=O.Customer_ID
+group by C.location
+order by Sum(O.Total_Amount) desc;
+```
+20. **Top 5 cities generating revenue**:
+```sql
+Select C.Location, Sum(O.Total_amount) as Revenue 
+from Customers C
+join Orders O
+on C.Customer_ID=O.Customer_ID
+group by C.location
+order by Sum(O.Total_Amount) desc
+limit 5;
+```
+21. **Customer lifetime value**:
+```sql
+Select C.Customer_ID, C.Customer_Name, Sum(O.Total_Amount) as Total_spend 
+from Customers C
+join Orders O
+on C.Customer_ID=O.Customer_ID
+group by C.Customer_Id, C.Customer_Name
+order by C.Customer_id;
+```
+22. **Category revenue contribution**: 
+```sql
+SELECT 
+P.Category,
+SUM(OI.Quantity * OI.Price_Per_Unit) AS Total_Revenue,
+ROUND(
+    (SUM(OI.Quantity * OI.Price_Per_Unit) /
+    (SELECT SUM(Quantity * Price_Per_Unit) FROM OrderDetails)) * 100
+,2) AS Contribution_Percent
+FROM Products P
+JOIN OrderDetails OI
+ON P.Product_ID = OI.Product_ID
+GROUP BY P.Category
+ORDER BY Contribution_Percent DESC;
+```
+
+
 
 ## Findings
 
-- **Customer Demographics**: The dataset includes customers from various age groups, with sales distributed across different categories such as Clothing and Beauty.
-- **High-Value Transactions**: Several transactions had a total sale amount greater than 1000, indicating premium purchases.
-- **Sales Trends**: Monthly analysis shows variations in sales, helping identify peak seasons.
-- **Customer Insights**: The analysis identifies the top-spending customers and the most popular product categories.
+- **Customers & Location Insights**:
+  The dataset contains multiple customers across different locations.
+  A small group of customers contributes a large portion of total revenue, showing a high-value customer segment.
+  Certain customers place multiple orders, making them loyal customers.
+  Some cities have significantly more customers, indicating strong market presence.
+  
+- **Sales Performance**:
+  Total company revenue was calculated using the orders table.
+  Monthly sales analysis revealed fluctuations in revenue, indicating seasonal purchasing behavior.
+  Month-over-month growth analysis helped identify periods of high and low sales performance.
+  
+- **Product Performance**:
+  Some products have very high sales quantities, making them top-selling items.
+  A few products show very low sales, indicating potential low demand or poor marketing.
+  Best-selling products vary by category, showing different customer preferences.
+  
+- **Customer Insights**:
+  Certain product categories generate significantly higher revenue contributions.
+  Category revenue analysis shows that a few categories dominate overall sales.
 
-## Reports
+## Business Insights    
 
-- **Sales Summary**: A detailed report summarizing total sales, customer demographics, and category performance.
-- **Trend Analysis**: Insights into sales trends across different months and shifts.
-- **Customer Insights**: Reports on top customers and unique customer counts per category.
+- High-value customers should be targeted with loyalty programs.
+- Top-selling products should be prioritized for inventory and marketing.
+- Low-selling products may require discounts, promotion, or removal.
+- High-revenue cities are ideal locations for expanding business operations.
 
 ## Conclusion
 
-This project serves as a comprehensive introduction to SQL for data analysts, covering database setup, data cleaning, exploratory data analysis, and business-driven SQL queries. The findings from this project can help drive business decisions by understanding sales patterns, customer behavior, and product performance.
+This analysis demonstrates how SQL can be used to extract meaningful insights from an e-commerce dataset.
 
-## How to Use
+**The project covers**:
+- Data cleaning and validation
+- Customer behavior analysis
+- Product performance evaluation
+- Revenue trend analysis
+- Category contribution analysis
 
-1. **Clone the Repository**: Clone this project repository from GitHub.
-2. **Set Up the Database**: Run the SQL scripts provided in the `database_setup.sql` file to create and populate the database.
-3. **Run the Queries**: Use the SQL queries provided in the `analysis_queries.sql` file to perform your analysis.
-4. **Explore and Modify**: Feel free to modify the queries to explore different aspects of the dataset or answer additional business questions.
 
-## Author - Zero Analyst
-
-This project is part of my portfolio, showcasing the SQL skills essential for data analyst roles. If you have any questions, feedback, or would like to collaborate, feel free to get in touch!
-
-### Stay Updated and Join the Community
-
-For more content on SQL, data analysis, and other data-related topics, make sure to follow me on social media and join our community:
-
-- **YouTube**: [Subscribe to my channel for tutorials and insights](https://www.youtube.com/@zero_analyst)
-- **Instagram**: [Follow me for daily tips and updates](https://www.instagram.com/zero_analyst/)
-- **LinkedIn**: [Connect with me professionally](https://www.linkedin.com/in/najirr)
-- **Discord**: [Join our community to learn and grow together](https://discord.gg/36h5f2Z5PK)
 
 Thank you for your support, and I look forward to connecting with you!
