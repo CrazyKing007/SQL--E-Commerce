@@ -424,4 +424,4 @@ This analysis demonstrates how SQL can be used to extract meaningful insights fr
 
 
 
-Thank you for your support, and I look forward to connecting with you!
+Thank you for your precious time.
